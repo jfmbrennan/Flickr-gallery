@@ -7,10 +7,23 @@
 require_once('../libs/flickr.php');
 $flickr = new Flickr("00e8703723e5a0f290fe262c748cf4ff");
 
-$search = $_POST['search']['query'];
+$search = $_GET['q'];
+$page = (empty($_GET['page'])) ? 1 : $_GET['page'];;
 
-$results = $flickr->getImages($search);
+$results = $flickr->getImages($search, $page);
+$pages = $results['photos']['pages'];
 
+$page_range = array();
+
+if($pages <= 10) { 
+  $page_range = range(1, $pages);
+} elseif($page <= 5) { 
+  $page_range = range(1, 10);
+} elseif (($pages-$page) < 5) {
+  $page_range = range($pages-10, $pages);
+} else {
+  $page_range = range($page-5, $page+5);
+}
 
 ?>
 <!DOCTYPE html>
@@ -36,18 +49,37 @@ $results = $flickr->getImages($search);
 <body>
 
   <div id="page_container">
-    <header id="page_header">
+    <header id="page_header" class="hero-unit">
       <h1>PHP/HTML Flickr Gallery</h1>
     </header>
 
     <section id="page_section">
       <?php if(!empty($results) and is_array($results)) { ?>
-        <ul id="gallery">
-          <?php foreach($results as $photo) { ?>
-            <li><?php echo $photo['id']; ?></li>
+        <ul id="gallery" class="thumbnails">
+          <?php foreach($results['photos']['photo'] as $photo) { ?>
+            <li class="span3">
+              <a class="thumbnail" href="<?php echo $flickr->getOriginalImageUrl($photo); ?>">
+              <img src="<?php echo $flickr->getImageUrl($photo); ?>" title="<?php echo $photo['title']; ?>"/>
+              </a>
+            </li>
           <?php } ?>
         </ul>
       <?php } ?>
+      <div class="pagination pagination-centered">
+        <ul>
+          <?php if($page > 1) { ?>
+            <li><a href="<?php echo "gallery.php?q=$search&page=".$page-1; ?>">Prev</a></li>
+          <?php } ?>
+          <?php foreach($page_range as $pg) { ?>
+            <li<?php echo ($pg == $page) ? ' class="active"' : ''; ?>>
+              <a href="<?php echo "gallery.php?q=$search&page=$pg"; ?>"><?php echo $pg; ?></a>
+            </li>
+          <?php } ?>
+          <?php if($page != $pages) { ?>
+            <li><a href="<?php echo 'gallery.php?q='.$search.'&page='.($page+1); ?>">Next</a></li>
+          <?php } ?>
+        </ul>
+      </div>
     </section>
 
     <footer id="page_footer"></footer>
