@@ -96,7 +96,7 @@ class Flickr {
       'api_key'   =>  $this->api_key,
       'format'    =>  $this->format,
       'method'    =>  'flickr.photos.search',
-      'text'      =>  $search_string,
+      'tags'      =>  $search_string,
       'page'      =>  $page,
       'per_page'  =>  $limit
     );
