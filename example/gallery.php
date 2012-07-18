@@ -5,7 +5,7 @@
  */
 
 require_once('../libs/flickr.php');
-$flickr = new Flickr("api_key");
+$flickr = new Flickr("00e8703723e5a0f290fe262c748cf4ff");
 
 $search = $_POST['search']['query'];
 
