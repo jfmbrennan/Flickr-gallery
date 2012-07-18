@@ -28,13 +28,6 @@ class Flickr {
    */
   function request($data) {
 
-    if(empty($data['api_key'])) {
-      $data['api_key'] = $this->api_key;
-    }
-    if(empty($data['format'])) {
-      $data['format'] = $this->format;
-    }
-
     // Initialise our cURL call
     $curl = curl_init($this->endpoint);
 
@@ -90,7 +83,7 @@ class Flickr {
    * Build query to search for images, parsing the response so
    * the view can easily fetch these images
    *
-   * @url
+   * @url http://www.flickr.com/services/api/flickr.photos.search.html
    *
    * @params string $search_string 
    * @params integer $page Page number 
@@ -128,9 +121,54 @@ class Flickr {
    * @params string $size Image size to retrieve 
    * @return string URL to fetch the image
    */
-  function getImageURL($image, $size='q') {
-    return "http://{$image['farm']}.staticflickr.com/{$image['server']}/{$image['id']}_{$image['secret']}_$size.jpg";
+  function getImageUrl($image, $size='q') {
+    return "http://farm{$image['farm']}.staticflickr.com/{$image['server']}/{$image['id']}_{$image['secret']}_$size.jpg";
   }
 
+  /*
+   * Get All Image sizes
+   *
+   * @url http://www.flickr.com/services/api/flickr.photos.getSizes.html
+   *
+   * @params mixed $image The image to get sizes for
+   * @return boolean|string Array of image sizes, false on failure
+   */
+  function getImageSizes($image) {
+    // Build request data
+    $data = array(
+      'api_key'   =>  $this->api_key,
+      'format'    =>  $this->format,
+      'method'    =>  'flickr.photos.getSizes',
+      'photo_id'  =>  $image['id'],
+    );
+
+    // Make call to flickr.photos.search
+    $response = $this->request($data);
+
+    if($response === false) {
+      return array();
+    }
+
+    // Return a parsed PHP array
+    return unserialize($response);
+  }
+
+  /*
+   * Get the largest available public image
+   * NB: This not might always be the original image
+   *
+   * @params mixed $image The image to get URL for
+   * @return string URL of original image
+   */
+  function getOriginalImageUrl($image) {
+    // Get Image info to obtain original secret
+    $image_sizes = $this->getImageSizes($image);
+
+    // The last array element is the largest available image
+    $original_image = array_pop($image_sizes['sizes']['size']);
+
+    // Return the image url
+    return $original_image['source'];
+  }
 }
 ?>

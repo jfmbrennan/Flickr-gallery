@@ -74,7 +74,7 @@ class FlickrApi extends PHPUnit_Framework_TestCase
    * Test if we can connect to Flickr's API
    *
    */
-  public function testFlickrApiGetImageURL() {
+  public function testFlickrApiGetImageUrl() {
 
     // Instantiate Flickr
     $flickr = new Flickr("00e8703723e5a0f290fe262c748cf4ff");
@@ -88,17 +88,38 @@ class FlickrApi extends PHPUnit_Framework_TestCase
 
     // Try to connect to Flickr
     $image_url = $flickr->getImageUrl($image);
-    $url = 'http://9.staticflickr.com/8005/7589014604_20eb928ca2_q.jpg';
+    $url = 'http://farm9.staticflickr.com/8005/7589014604_20eb928ca2_q.jpg';
 
     // Did we succeed?
     $this->assertEquals($url, $image_url);
     
     // Try the same image, different size
     $image_url = $flickr->getImageUrl($image, 'm');
-    $url = 'http://9.staticflickr.com/8005/7589014604_20eb928ca2_m.jpg';
+    $url = 'http://farm9.staticflickr.com/8005/7589014604_20eb928ca2_m.jpg';
 
     // Did we succeed?
     $this->assertEquals($url, $image_url);
+  }
+  /*
+   * Test if we can connect to Flickr's API
+   *
+   */
+  public function testFlickrApiGetImageSizes() {
+
+    // Instantiate Flickr
+    $flickr = new Flickr("00e8703723e5a0f290fe262c748cf4ff");
+
+    // Try to connect to Flickr
+    $response = $flickr->getImages("sydney", 1, 1);
+
+    // Did we succeed?
+    $this->assertNotNull($response);
+
+    // Now get image info
+    $photo_info = $flickr->getImageSizes($response['photos']['photo'][0]);
+
+    // Did we succeed?
+    $this->assertEquals($photo_info['stat'], 'ok');
   }
 }
 ?>
