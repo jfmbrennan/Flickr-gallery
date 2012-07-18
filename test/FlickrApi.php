@@ -20,7 +20,8 @@ class FlickrApi extends PHPUnit_Framework_TestCase
     $flickr = new Flickr("00e8703723e5a0f290fe262c748cf4ff");
 
     $data = Array(
-      'method' => 'flickr.test.null',
+      'api_key' => '00e8703723e5a0f290fe262c748cf4ff',
+      'method' => 'flickr.test.echo',
       'format' => 'php_serial'
     );
 
@@ -32,6 +33,21 @@ class FlickrApi extends PHPUnit_Framework_TestCase
 
     // Parse our response into a readable array format
     $parse_response = unserialize($response);
+
+    // Did we succeed?
+    $this->assertEquals($parse_response['stat'], 'ok');
+  }
+  /*
+   * Test if we can connect to Flickr's API
+   *
+   */
+  public function testFlickrApiPing() {
+
+    // Instantiate Flickr
+    $flickr = new Flickr("00e8703723e5a0f290fe262c748cf4ff");
+
+    //Try to connect to Flickr
+    $connect = $flickr->ping();
 
     // Did we succeed?
     $this->assertTrue($connect);
@@ -51,26 +67,8 @@ class FlickrApi extends PHPUnit_Framework_TestCase
     // Have we a valid response object?
     $this->assertNotNull($response);
 
-    // Parse our response into a readable array format
-    //$parse_response = unserialize($response);
-
     // Did we succeed?
-    //$this->assertTrue($connect);
-  }
-  /*
-   * Test if we can connect to Flickr's API
-   *
-   */
-  public function testFlickrApiPing() {
-
-    // Instantiate Flickr
-    $flickr = new Flickr("00e8703723e5a0f290fe262c748cf4ff");
-
-    //Try to connect to Flickr
-    $connect = $flickr->ping();
-
-    // Did we succeed?
-    $this->assertTrue($connect);
+    $this->assertEquals($response['stat'], 'ok');
   }
   /*
    * Test if we can connect to Flickr's API
@@ -84,8 +82,8 @@ class FlickrApi extends PHPUnit_Framework_TestCase
     $image = array(
       'id'      =>  '7589014604',
       'farm'    =>  '9',
-      'server'  =>  '8005'
-      'secret'  =>  '20eb928ca2',
+      'server'  =>  '8005',
+      'secret'  =>  '20eb928ca2'
     );
 
     // Try to connect to Flickr

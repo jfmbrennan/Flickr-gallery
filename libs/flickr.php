@@ -28,8 +28,15 @@ class Flickr {
    */
   function request($data) {
 
+    if(empty($data['api_key'])) {
+      $data['api_key'] = $this->api_key;
+    }
+    if(empty($data['format'])) {
+      $data['format'] = $this->format;
+    }
+
     // Initialise our cURL call
-    $curl = curl_init();
+    $curl = curl_init($this->endpoint);
 
     // Set our cURL options (url, post data)
     curl_setopt($curl, CURLOPT_URL, $this->endpoint);
@@ -53,7 +60,7 @@ class Flickr {
     }
 
     // And return the valid response
-    return $response;
+    return $content;
   }
 
   /*
