@@ -7,8 +7,8 @@
 require_once('../libs/flickr.php');
 $flickr = new Flickr("00e8703723e5a0f290fe262c748cf4ff");
 
-$search = $_GET['q'];
-$page = (empty($_GET['page'])) ? 1 : $_GET['page'];;
+$search = preg_replace('/[^A-Za-z0-9:.\/_-]/', '', $_GET['q']);
+$page = (empty($_GET['page'])) ? 1 : preg_replace('/[^A-Za-z0-9:.\/_-]/', '', $_GET['page']);
 
 $results = $flickr->getImages($search, $page);
 $pages = $results['photos']['pages'];
